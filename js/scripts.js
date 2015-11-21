@@ -1,33 +1,24 @@
 
 function initMap() {
-//  var map = new google.maps.Map(document.getElementById('map'), {
-//    zoom: 8,
-//    center: {lat: 40.731, lng: -73.997}
-//  });
-//  var geocoder = new google.maps.Geocoder;
-//  var infowindow = new google.maps.InfoWindow;
-//
-//  document.getElementById('submit').addEventListener('click', function() {
-//    geocodeLatLng(geocoder, map, infowindow);
-//  });
-    
-    alert("Geocode loaded")
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position){
+            alert(position.coords.latitude)
+            geocodeLatLng(position.coords);
+        });
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
 }
 
-function geocodeLatLng(geocoder, map, infowindow) {
-  var input = document.getElementById('latlng').value;
-  var latlngStr = input.split(',', 2);
-  var latlng = {lat: parseFloat(latlngStr[0]), lng: parseFloat(latlngStr[1])};
+function geocodeLatLng(latlngObj) {
+    var geocoder = new google.maps.Geocoder;
+//  var input = document.getElementById('latlng').value;
+//  var latlngStr = input.split(',', 2);
+    var latlng = {lat: parseFloat(latlngObj.latitude), lng: parseFloat(latlngObj.longitude)};
   geocoder.geocode({'location': latlng}, function(results, status) {
     if (status === google.maps.GeocoderStatus.OK) {
-      if (results[1]) {
-        map.setZoom(11);
-        var marker = new google.maps.Marker({
-          position: latlng,
-          map: map
-        });
-        infowindow.setContent(results[1].formatted_address);
-        infowindow.open(map, marker);
+      if (results[0]) {
+        alert("You are at: "+results[0].formatted_address)
       } else {
         window.alert('No results found');
       }
